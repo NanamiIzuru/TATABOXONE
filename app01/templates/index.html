@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <!--suppress HtmlUnknownTarget -->
+    <div class="container">
+        <div style="margin-bottom: 10px">
+            <a class="btn btn-primary" href="/adduser/">新建</a>
+        </div>
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                视频列表
+            </div>
+            <div class="panel-body">
+                <p>简介简介简介简介简介简介简介简介简介简介简介简介简介简介简介简介</p>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>名称</th>
+                    <th>密码</th>
+                    <th>年龄</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in data %}
+                    <tr>
+                        <th scope="row">{{ i.id }}</th>
+                        <td>{{ i.name }}</td>
+                        <td>{{ i.password }}</td>
+                        <td>{{ i.age }}</td>
+                        <td>
+                            <a class="btn btn-primary btn-xs" href="/edituser/{{ i.id }}/">编辑</a>
+                            <a class="btn btn-danger btn-xs" href="/delete/{{ i.id }}">删除</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div>
+            {{ page_string }}
+        </div>
+    </div>
+{% endblock %}

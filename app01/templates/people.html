@@ -1,0 +1,499 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block style %}
+    <style>
+        p {
+            display: block;
+            margin-block-start: 1em;
+            margin-block-end: 1em;
+            margin-inline-start: 0;
+            margin-inline-end: 0;
+        }
+
+        .card-list {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
+        }
+
+        img {
+            display: inline-block;
+        }
+
+        .video-card_info img {
+            margin-top: 0;
+            width: 17px;
+            height: 17px;
+            margin-right: 3px;
+            margin-bottom: 2px;
+        }
+
+        li,
+        ul,
+        ol {
+            list-style: none;
+        }
+
+        ul {
+            margin-block-start: 1em;
+            margin-block-end: 1em;
+            margin-inline-start: 0;
+            margin-inline-end: 0;
+            padding-inline-start: 40px;
+        }
+
+        .video-card {
+            height: 116px;
+            border-radius: 2px;
+            position: relative;
+            display: flex;
+            vertical-align: top;
+            margin-bottom: 40px;
+        }
+
+        .video-card_content {
+            width: 206px;
+            flex-shrink: 0;
+            margin-right: 10px;
+            background: #e7e7e7;
+            height: 116px;
+            border-radius: 2px;
+            position: relative;
+        }
+
+        a {
+            outline: 0;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .cover-picture_img {
+            width: 100%;
+            height: 100%;
+            border-radius: 2px;
+        }
+
+        .video-card_info {
+            cursor: pointer;
+            width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-content: center;
+            justify-content: space-between;
+            color: #999;
+            font-size: 12px;
+            padding: 0 70px 0 0;
+        }
+
+        .video_info {
+            width: 350px;
+            height: 116px;
+            border: 1px solid black;
+        }
+
+        .video-name {
+            width: 500px;
+        {#display: -webkit-box;#} overflow: hidden;
+        {#-webkit-box-orient: vertical;#} margin-top: 0;
+            text-overflow: ellipsis;
+        {#word-break: break-word;#}{#-webkit-line-clamp: 2;#} white-space: nowrap;
+            height: 43px;
+            font-size: 14px;
+            color: #212121;
+            padding: 0;
+            margin-bottom: 8px;
+            line-height: 20px;
+            transition: color .3s;
+            font-weight: 600;
+        }
+
+        .strong-tag {
+            background: #fff1ed;
+            color: #f63;
+        }
+
+        .rcmd-tag {
+            display: inline-block;
+            border-radius: 2px;
+            font-size: 12px;
+            padding: 0 3px;
+            margin-bottom: 4px;
+            border: 1px solid #fff1ed;
+            transform: scale(.9);
+            transform-origin: left;
+        }
+
+        .up-name {
+            display: flex !important;
+            align-items: center;
+            height: 16px;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 3px;
+            display: -webkit-box;
+            overflow: hidden;
+            -webkit-box-orient: vertical;
+
+            text-overflow: ellipsis;
+            word-break: break-word;
+            -webkit-line-clamp: 1;
+        }
+
+        .video-stat {
+            line-height: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .play-text {
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .like-text {
+            display: flex;
+            align-items: center;
+        }
+
+        .popular-list {
+            padding: 20px 0 0;
+        }
+
+        .popular-video-container {
+            min-height: 100vh;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div style="margin-bottom: 10px">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">重新输入uid</button>
+            <button type="button" class="btn btn-primary" id="reloadvideo">刷新视频数据</button>
+            <a href="/people/save/?uid={{ people.mid }}" class="btn btn-primary">保存信息</a>
+        </div>
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                <span>{{ people.name }}</span>
+                <img src="{% static 'img/uid.png' %}" alt="uid" style="width:30px; height: 25px;">
+                <span id="uid">{{ people.mid }}</span>
+
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-2">
+                        <a href="https://space.bilibili.com/{{ people.mid }}" target="_blank">
+                            <img src="{{ people.face }}" height="155px" width="155px" alt="用户头像">
+                        </a>
+                    </div>
+                    <div class="col-xs-7">
+                        <div class="row" style=" margin-bottom: 10px">
+                            <div class="col-xs-6">性别：{{ people.sex }}</div>
+                            <div class="col-xs-6">生日：{{ people.birthday }}</div>
+                        </div>
+                        <div class="row" style="margin-bottom: 10px">
+                            <div class="col-xs-6">粉丝数：{{ people.follower }}</div>
+                            <div class="col-xs-6">关注数：{{ people.following }}</div>
+                        </div>
+                        <div class="row" style=" margin-bottom: 10px">
+                            <div class="col-xs-6">视频播放总数：{{ people.archive_view }}</div>
+                            <div class="col-xs-6">专栏阅读总数：{{ people.article_view }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">签名：{{ people.sign }}</div>
+                        </div>
+                    </div>
+                    <div class="col-xs-3">
+                        <div> 视频总数：{{ count }}</div>
+                        <div id="main">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="buttonList">
+                    {% for i, j in typelist.items %}
+                        <button type="button"
+                                {% if choice == j.id %}
+                                class="btn btn-success"
+                                {% else %}
+                                class="btn btn-info"
+                                {% endif %}
+                                id="{{ j.id }}" href="/popular/" style="width: 119px;">
+                            {{ i }}
+                            <span class="badge">{{ j.count }}</span>
+                        </button>
+                    {% endfor %}
+                </div>
+                <hr>
+                <div id="sortList">
+                    <button type="button"
+                            {% if sort == "view" %}
+                            class="btn btn-success"
+                            {% else %}
+                            class="btn btn-primary"
+                            {% endif %}
+                            id="view">观看最多
+                    </button>
+                    <button type="button"
+                            {% if sort == "like" %}
+                            class="btn btn-success"
+                            {% else %}
+                            class="btn btn-primary"
+                            {% endif %}
+                            id="like">点赞最多
+                    </button>
+                    <button type="button"
+                            {% if sort == "coin" %}
+                            class="btn btn-success"
+                            {% else %}
+                            class="btn btn-primary"
+                            {% endif %}
+                            id="coin">投币最多
+                    </button>
+                    <button type="button"
+                            {% if sort == "favourite" %}
+                            class="btn btn-success"
+                            {% else %}
+                            class="btn btn-primary"
+                            {% endif %}
+                            id="favourite">收藏最多
+                    </button>
+                    <button type="button"
+                            {% if sort == "share" %}
+                            class="btn btn-success"
+                            {% else %}
+                            class="btn btn-primary"
+                            {% endif %}
+                            id="share">分享最多
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="popular-video-container popular-list">
+                <div class="flow-loader" style="position:relative">
+                    <ul class="card-list">
+                        {% for i in video %}
+                            <div class="video-card">
+                                <div class="video-card_content">
+                                    <a href="{{ i.link }}" target="_blank">
+                                        <img src="{{ i.picture }}" alt="" class="lazy-image cover-picture_img">
+                                    </a>
+                                </div>
+                                <div class="video-card_info">
+                                    <p class="video-name">{{ i.title }}</p>
+                                    <div>
+                                        {#                                        <span class="rcmd-tag strong-tag">{{ i.reason }}</span>#}
+                                        {#                                        <span class="up-name">#}
+                                        {#                                            <img src="{% static 'img/icon_up.png' %}" alt="up">#}
+                                        {#                                            <span class="up-name_text">名字</span>#}
+                                        {#                                            <img src="{% static 'img/uid.png' %}" alt="uid"#}
+                                        {#                                                 style="width:25px; height: 20px;">#}
+                                        {#                                            <span class="up-name_text">333</span>#}
+                                        {#                                        </span>#}
+                                        <p class="video-stat">
+                                            <span class="play-text">
+                                                <img src="{% static 'img/view.png' %}" alt="play">
+                                                {{ i.view }}
+                                            </span>
+                                            <span class="like-text">
+                                                <img src="{% static 'img/view.png' %}" alt="like">
+                                                {{ i.danmu }}
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="video_info">
+                                    <div>{{ i.type_name }}--{{ i.tag_name }}</div>
+                                    <div class="row">
+                                        <div class="col-xs-5">av号：{{ i.aid }}</div>
+                                        <div class="col-xs-7">bv号：{{ i.bvid }}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-4"> 点赞：{{ i.like }}</div>
+                                        <div class="col-xs-4"> 投币：{{ i.coin }}</div>
+                                        <div class="col-xs-4"> 收藏：{{ i.favourite }}</div>
+                                    </div>
+                                    <div> 分享：{{ i.share }}</div>
+                                    <a tabindex="0" role="button" class="btn btn-primary btn-sm"
+                                       data-toggle="popover" data-content="{{ i.description }}"
+                                       data-placement="left" data-trigger="focus">
+                                        简介
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {#    模态框#}
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data->
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">请输入一个uid</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="number" placeholder="请输入uid" name="uid" id="modaluid" required
+                           oninput="value=value.replace(/^(0+)|\D+/g,'')">
+                    <button type="button" class="btn btn-primary" id="submitUidBtn">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--第二个模态框 -->
+    <div class="modal fade" id="waitModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data->
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    爬取信息中，请等待......
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $(function () {
+            fun();
+            bindSubmitUidButton();
+            bindReloadVideoBtn();
+        })
+
+
+        // 在这里设置模态框的默认属性
+        function fun() {
+            $("[data-toggle='popover']").popover();
+            $('#myModal').modal({
+                backdrop: "static",
+                show: false,
+            })
+            $('#waitModal').modal({
+                backdrop: "static",
+                show: false,
+            })
+            let test = window.location.search;
+            console.log(test);
+            if (test.indexOf("?") == -1) {
+                {#var str = test.substring(1);#}
+                {#strs = str.split("=");#}
+                {#console.log(str)#}
+                $('#myModal').modal('show')
+            }
+            let blist = document.getElementById("buttonList");
+            blist.onclick = function (ev) {
+                let uid = locationExtract('uid')
+                let e = ev || window.event;
+                let target = e.target
+                if (target.nodeName.toLowerCase() === 'button') {
+                    window.location.href = `http://127.0.0.1:8000/people/?uid=${uid}&typeid=${target.id}`;
+                }
+            }
+
+            let sortlist = document.getElementById("sortList");
+            sortlist.onclick = function (ev) {
+                let e = ev || window.event;
+                let target = e.target
+                if (target.nodeName.toLowerCase() === 'button') {
+                    let uid = locationExtract('uid')
+                    console.log(uid)
+                    console.log(location.href)
+                    let a = location.href.indexOf('typeid');
+                    if (a != "-1") {
+                        console.log("url中包含typeid")
+                        let i = locationExtract('typeid')
+                        console.log(i)
+                        window.location.href = `http://127.0.0.1:8000/people/?uid=${uid}&typeid=${i}&sort=${target.id}`;
+                    } else {
+                        window.location.href = `http://127.0.0.1:8000/people/?uid=${uid}&sort=${target.id}`;
+                    }
+                }
+            }
+        }
+
+        function bindSubmitUidButton() {
+            $("#submitUidBtn").click(function () {
+                let val = $("#modaluid").val()
+                console.log(val)
+                $.ajax({
+                    url: '/people/search/',
+                    type: 'get',
+                    data: {
+                        'uid': val,
+                    },
+                    success: function (res) {
+                        $('#waitModal').modal('hide');
+                        if (res.status) {
+                            window.location.href = `http://127.0.0.1:8000/people/?uid=${res.uid}`
+                        }
+                        else {
+                            alert("获取信息失败！请重试！")
+                        }
+                    }
+                })
+                $('#myModal').modal('hide')
+                $('#waitModal').modal('show')
+            })
+        }
+        function bindReloadVideoBtn(){
+            $("#reloadvideo").click(function () {
+                $('#waitModal').modal('show')
+                let val = locationExtract('uid')
+                $.ajax({
+                    url: '/people/reload/',
+                    type: 'get',
+                    data: {
+                        'uid': val,
+                    },
+                    success: function (res) {
+                        $('#waitModal').modal('hide');
+                        if (res.status) {
+                            alert("刷新视频数据成功！")
+                            window.location.href = `http://127.0.0.1:8000/people/?uid=${res.uid}`
+                        }
+                        else{
+                            alert("刷新视频数据失败！")
+                        }
+                    }
+                })
+            })
+        }
+        //获得url内参数函数
+        function locationExtract(classify) {
+            let url = window.location.search;
+            if (url === "" || url.indexOf('=') < 0)
+                return;
+            if (url.indexOf('&') < 0) {
+                if (url.slice(1).split('=')[0] === classify) {
+                    return url.slice(1).split('=')[1];
+                    // 当url后面只有一个参数时没加分隔符，此时只需判断第一个是否为自己要找的参数
+                }
+            }
+            let par = url.slice(1).split('&');
+            for (let index = 0; index < par.length; index++) {
+                let indexClass = par[index].split('=');
+                if (indexClass[0] === classify) {
+                    return indexClass[1]
+                }
+            }
+        }
+    </script>
+{% endblock %}
+
+
